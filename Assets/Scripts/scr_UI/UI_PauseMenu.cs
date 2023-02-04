@@ -30,8 +30,14 @@ public class UI_PauseMenu : MonoBehaviour
     private void Start()
     {
         btn_ReturnToGame.onClick.AddListener(UnpauseGame);
-        btn_ReturnToMM.onClick.AddListener(LoadMainMenuScene);
-        btn_Quit.onClick.AddListener(Quit);
+        btn_ReturnToMM.onClick.AddListener(
+            delegate { GetComponent<UI_Confirmation>().UIConfirmationRequest("pauseMenu",
+                                                                             "returnToMM",
+                                                                             "Do you want to go back to main menu?"); });
+        btn_Quit.onClick.AddListener(
+            delegate { GetComponent<UI_Confirmation>().UIConfirmationRequest("pauseMenu",
+                                                                             "quit",
+                                                                             "Do you want to go quit the game?"); });
     }
 
     private void Update()

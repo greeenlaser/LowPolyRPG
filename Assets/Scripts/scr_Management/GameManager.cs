@@ -14,15 +14,14 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         sceneIndex = SceneManager.GetActiveScene().buildIndex;
-
-        if (sceneIndex == 1)
-        {
-            PauseMenuScript = GetComponent<UI_PauseMenu>();
-        }
     }
 
     private void Start()
     {
-        PauseMenuScript.UnpauseGame();
+        if (sceneIndex == 1)
+        {
+            PauseMenuScript = GetComponent<UI_PauseMenu>();
+            PauseMenuScript.UnpauseGame();
+        }
     }
 }
