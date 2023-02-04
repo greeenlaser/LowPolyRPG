@@ -5,8 +5,9 @@ using UnityEngine;
 
 public class UI_DebugMenu : MonoBehaviour
 {
-    [Header("UI")]
+    [Header("Assignables")]
     [SerializeField] private TMP_Text txt_FPS;
+    [SerializeField] private GameObject thePlayer;
 
     //private variables
     private float timer;
