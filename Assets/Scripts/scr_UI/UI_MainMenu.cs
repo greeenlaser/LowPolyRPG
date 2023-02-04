@@ -16,6 +16,10 @@ public class UI_MainMenu : MonoBehaviour
 
     private void Start()
     {
+        Time.timeScale = 1;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         btn_Play.onClick.AddListener(LoadGameScene);
         btn_Credits.onClick.AddListener(OpenCredits);
         btn_ReturnToMM.onClick.AddListener(OpenMM);
