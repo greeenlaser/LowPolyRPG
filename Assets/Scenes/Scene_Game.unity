@@ -170,6 +170,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 114145288}
+  - component: {fileID: 114145293}
   - component: {fileID: 114145291}
   - component: {fileID: 114145290}
   - component: {fileID: 114145289}
@@ -279,6 +280,24 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114145293
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 114145287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca106be9b87ba9468c46cfdad526c2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  walkSpeed: 6
+  sprintSpeed: 12
+  par_Managers: {fileID: 193468459}
+  canMove: 0
+  canSprint: 0
+  velocity: {x: 0, y: 0, z: 0}
 --- !u!1 &121307439
 GameObject:
   m_ObjectHideFlags: 0
@@ -440,6 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebd3bba9a37cec6419301892900d1e02, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  sceneIndex: 0
 --- !u!114 &193468463
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -457,6 +477,7 @@ MonoBehaviour:
   btn_ReturnToGame: {fileID: 4415160259537772744}
   btn_ReturnToMM: {fileID: 4415160260176194708}
   btn_Quit: {fileID: 4415160261168049315}
+  thePlayer: {fileID: 114145287}
   isPaused: 0
 --- !u!1 &267767202
 GameObject:
@@ -1217,6 +1238,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1952320575}
+  - component: {fileID: 1952320577}
   - component: {fileID: 1952320574}
   - component: {fileID: 1952320573}
   - component: {fileID: 1952320576}
@@ -1418,6 +1440,21 @@ MonoBehaviour:
       enableFptlForForwardOpaque: 0
       enableBigTilePrepass: 0
       isFptlEnabled: 0
+--- !u!114 &1952320577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1952320572}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd6a1ef15053a274bac383c7d8192965, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isCamEnabled: 0
+  sensX: 0
+  sensY: 0
 --- !u!1 &1077558415839646592
 GameObject:
   m_ObjectHideFlags: 0

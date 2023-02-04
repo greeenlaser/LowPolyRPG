@@ -18,7 +18,11 @@ public class GameManager : MonoBehaviour
         if (sceneIndex == 1)
         {
             PauseMenuScript = GetComponent<UI_PauseMenu>();
-            PauseMenuScript.UnpauseGame();
         }
+    }
+
+    private void Start()
+    {
+        PauseMenuScript.UnpauseGame();
     }
 }

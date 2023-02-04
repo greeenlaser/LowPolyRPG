@@ -13,9 +13,20 @@ public class UI_PauseMenu : MonoBehaviour
     [SerializeField] private Button btn_ReturnToMM;
     [SerializeField] private Button btn_Quit;
 
+    [Header("Assignables")]
+    [SerializeField] private GameObject thePlayer;
+
     //public but hidden variables
     [HideInInspector] public bool isPaused;
-    
+
+    //scripts
+    private Player_Movement PlayerMovementScript;
+
+    private void Awake()
+    {
+        PlayerMovementScript = thePlayer.GetComponent<Player_Movement>();
+    }
+
     private void Start()
     {
         btn_ReturnToGame.onClick.AddListener(UnpauseGame);
@@ -47,6 +58,8 @@ public class UI_PauseMenu : MonoBehaviour
         par_PMContent.SetActive(false);
         par_PM.SetActive(false);
 
+        PlayerMovementScript.LoadPlayer();
+
         Time.timeScale = 1;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -57,6 +70,8 @@ public class UI_PauseMenu : MonoBehaviour
     //only pauses the game
     public void PauseWithoutUI()
     {
+        PlayerMovementScript.UnloadPlayer();
+
         Time.timeScale = 0;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
