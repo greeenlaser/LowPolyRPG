@@ -23,10 +23,10 @@ public class UI_MainMenu : MonoBehaviour
         btn_Play.onClick.AddListener(LoadGameScene);
         btn_Credits.onClick.AddListener(OpenCredits);
         btn_ReturnToMM.onClick.AddListener(OpenMM);
-        btn_Quit.onClick.AddListener(
-            delegate { GetComponent<UI_Confirmation>().UIConfirmationRequest("mainMenu",
-                                                                             "quit",
-                                                                             "Do you want to go quit the game?"); });
+        btn_Quit.onClick.AddListener( delegate { GetComponent<UI_Confirmation>().
+            UIConfirmationRequest("mainMenu",
+                                  "quit",
+                                  "Do you want to go quit the game?"); });
     }
 
     //switch to game scene
