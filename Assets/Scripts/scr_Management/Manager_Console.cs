@@ -49,7 +49,7 @@ public class Manager_Console : MonoBehaviour
         CONSOLE_COMMAND,
         UNITY_LOG_MESSAGE,
         UNITY_LOG_ERROR,
-        INVALID_FILE_VARIABLE_VALUE,
+        INVALID_VARIABLE_VALUE,
         UNAUTHORIZED_PLAYER_ACTION
     }
 
@@ -295,7 +295,7 @@ public class Manager_Console : MonoBehaviour
         }
         else if (output.Contains("Incorrect value"))
         {
-            resultMessage = MessageType.INVALID_FILE_VARIABLE_VALUE.ToString();
+            resultMessage = MessageType.INVALID_VARIABLE_VALUE.ToString();
         }
         else if (output.Contains("Requirements not met"))
         {
