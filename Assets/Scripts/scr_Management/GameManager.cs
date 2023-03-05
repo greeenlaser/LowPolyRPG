@@ -7,6 +7,9 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Assignables")]
+    [SerializeField] private GameObject thePlayer;
+
     //public but hidden variables
     [HideInInspector] public string parentPath;
     [HideInInspector] public string gamePath;
@@ -17,6 +20,7 @@ public class GameManager : MonoBehaviour
     //scripts
     private UI_PauseMenu PauseMenuScript;
     private Manager_Console ConsoleScript;
+    private Player_Movement PlayerMovementScript;
 
     //private variables
     private int currentScene;
@@ -25,6 +29,7 @@ public class GameManager : MonoBehaviour
     {
         PauseMenuScript = GetComponent<UI_PauseMenu>();
         ConsoleScript = GetComponent<Manager_Console>();
+        PlayerMovementScript = thePlayer.GetComponent<Player_Movement>();
 
         currentScene = SceneManager.GetActiveScene().buildIndex;
 
@@ -66,6 +71,8 @@ public class GameManager : MonoBehaviour
     {
         PauseMenuScript.UnpauseGame();
         ConsoleScript.CloseConsole();
+
+        PlayerMovementScript.LoadPlayer();
     }
 
     public void CreatePaths()
