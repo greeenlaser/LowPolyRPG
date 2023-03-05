@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class UI_MainMenu : MonoBehaviour
 {
@@ -51,6 +52,12 @@ public class UI_MainMenu : MonoBehaviour
     //quit the game
     public void Quit()
     {
+#if UNITY_EDITOR
+        EditorApplication.isPlaying = false;
+#endif
+
+#if UNITY_STANDALONE
         Application.Quit();
+#endif
     }
 }

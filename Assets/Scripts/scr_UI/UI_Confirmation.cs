@@ -44,7 +44,7 @@ public class UI_Confirmation : MonoBehaviour
         {
             if (callerMethod == "returnToMM")
             {
-                btn_Accept.onClick.AddListener(delegate { GetComponent<UI_PauseMenu>().LoadMainMenuScene(); });
+                btn_Accept.onClick.AddListener(delegate { GetComponent<UI_PauseMenu>().ReturnToMainMenu(); });
             }
             else if (callerMethod == "quit")
             {

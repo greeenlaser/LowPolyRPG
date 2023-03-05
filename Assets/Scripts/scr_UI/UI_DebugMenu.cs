@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class UI_DebugMenu : MonoBehaviour
 {
-    [Header("Assignables")]
+    [Header("UI")]
+    public GameObject par_DebugMenu;
     [SerializeField] private TMP_Text txt_FPS;
-    [SerializeField] private GameObject thePlayer;
 
     //private variables
     private float timer;
@@ -15,6 +15,7 @@ public class UI_DebugMenu : MonoBehaviour
 
     private void Start()
     {
+        QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 999;
     }
 
