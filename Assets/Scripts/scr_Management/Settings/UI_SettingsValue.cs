@@ -127,9 +127,11 @@ public class UI_SettingsValue : MonoBehaviour
         {
             case VariableType.isBool:
                 settingValue_Bool = settingValue_Bool_Default;
+                toggle.isOn = settingValue_Bool;
                 break;
             case VariableType.isFloat:
                 settingValue_Number = settingValue_Number_Default;
+                slider.value = settingValue_Number;
                 break;
             case VariableType.isString:
                 settingValue_String = settingValue_String_Default;
