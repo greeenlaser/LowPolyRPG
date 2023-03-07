@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     //scripts
     private UI_PauseMenu PauseMenuScript;
     private Manager_Console ConsoleScript;
+    private Manager_Settings SettingsScript;
     private Player_Movement PlayerMovementScript;
 
     //private variables
@@ -69,6 +70,9 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        SettingsScript = GetComponent<Manager_Settings>();
+        SettingsScript.LoadSettings();
+
         PauseMenuScript.UnpauseGame();
         ConsoleScript.CloseConsole();
 

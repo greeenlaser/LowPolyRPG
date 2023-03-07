@@ -7,45 +7,49 @@ using UnityEngine.UI;
 public class UI_SettingsValue : MonoBehaviour
 {
     [Header("Variable setup")]
-    [SerializeField] private string settingName;
-    [SerializeField] private VariableType variableType;
-    [SerializeField] private enum VariableType
+    public string settingName;
+    public VariableType variableType;
+    public enum VariableType
     {
         isBool,
         isFloat,
         isString
     }
 
-    [Header("Variable default value")]
-    [SerializeField] private float settingValue_Number_Default;
-    [SerializeField] private bool settingValue_Bool_Default;
-    [SerializeField] private string settingValue_String_Default;
-    [SerializeField] private List<string> settingValue_String_Choices;
-
-    [Header("Variable UI")]
-    [SerializeField] private Toggle toggle;
-    [SerializeField] private Slider slider;
-    [SerializeField] private TMP_Dropdown dropdown;
-
-    //current variable value
-    [HideInInspector] public float settingValue_Number;
+    [Header("Bool")]
+    public bool settingValue_Bool_Default;
+    public Toggle toggle;
     [HideInInspector] public bool settingValue_Bool;
-    [HideInInspector] public string settingValue_String;
 
-    //scripts
-    private Manager_Console ConsoleScript;
+    [Header("Number")]
+    public float settingValue_Number_Default;
+    public Slider slider;
+    [SerializeField] private TMP_Text txt_SliderValue;
+    [HideInInspector] public float settingValue_Number;
+
+    [Header("Choice")]
+    public string settingValue_String_Default;
+    public List<string> settingValue_String_Choices;
+    public TMP_Dropdown dropdown;
+    [HideInInspector] public string settingValue_String;
 
     private void Awake()
     {
-        ConsoleScript = FindObjectOfType<Manager_Console>();
-
+        if (toggle != null)
+        {
+            toggle.onValueChanged.AddListener(delegate { UpdateToggle(); });
+        }
+        if (slider != null)
+        {
+            slider.onValueChanged.AddListener(delegate { UpdateSlider(); });
+        }
         if (dropdown != null)
         {
             dropdown.ClearOptions();
             dropdown.AddOptions(settingValue_String_Choices);
             foreach (string choice in settingValue_String_Choices)
             {
-                dropdown.onValueChanged.AddListener(delegate { UpdateSelectedValue(); }) ;
+                dropdown.onValueChanged.AddListener(delegate { UpdateValue(choice); }) ;
             }
         }
     }
@@ -60,6 +64,22 @@ public class UI_SettingsValue : MonoBehaviour
             VariableType.isString => settingValue_String,
             _ => ""
         };
+    }
+
+    //assigned to the toggle of this setting
+    public void UpdateToggle()
+    {
+        UpdateValue(toggle.isOn.ToString());
+    }
+    //assigned to the slider of this setting
+    public void UpdateSlider()
+    {
+        UpdateValue(slider.value.ToString());
+    }
+    //assigned to the dropdown of this setting
+    public void UpdateDropdown()
+    {
+
     }
     //updates current value of this setting to new selected value
     public void UpdateValue(string insertedValue)
@@ -77,45 +97,28 @@ public class UI_SettingsValue : MonoBehaviour
                 {
                     settingValue_Number = float.Parse(insertedValue);
                     slider.value = settingValue_Number;
-                }
-                else
-                {
-                    ConsoleScript.CreateNewConsoleLine(
-                        "Error: Inserted value " + insertedValue + " " +
-                        "for " + settingName + " is out of range!", "INVALID_VARIABLE_VALUE");
+                    txt_SliderValue.text = settingValue_Number.ToString();
                 }
                 break;
             case VariableType.isString:
-                bool foundValue = false;
                 foreach (string choice in settingValue_String_Choices)
                 {
                     if (insertedValue == choice)
                     {
-                        foundValue = true;
+                        settingValue_String = insertedValue;
+                        for (int i = 0; i < settingValue_String_Choices.Count; i++)
+                        {
+                            string selectedValue = settingValue_String_Choices[i];
+                            string userDefinedValue = settingValue_String;
+
+                            if (userDefinedValue == selectedValue)
+                            {
+                                dropdown.value = i;
+                                break;
+                            }
+                        }
                         break;
                     }
-                }
-
-                if (foundValue)
-                {
-                    settingValue_String = insertedValue;
-                    for (int i = 0; i < settingValue_String_Choices.Count; i++)
-                    {
-                        string selectedValue = settingValue_String_Choices[i];
-                        string userDefinedValue = settingValue_String;
-
-                        if (userDefinedValue == selectedValue)
-                        {
-                            dropdown.value = i;
-                            break;
-                        }
-                    }
-                }
-                else
-                {
-                    ConsoleScript.CreateNewConsoleLine(
-                        "Error: Inserted value " + insertedValue + " " +
-                        "for " + settingName + " is not valid!", "INVALID_VARIABLE_VALUE");
                 }
                 break;
         }
@@ -132,6 +135,7 @@ public class UI_SettingsValue : MonoBehaviour
             case VariableType.isFloat:
                 settingValue_Number = settingValue_Number_Default;
                 slider.value = settingValue_Number;
+                txt_SliderValue.text = settingValue_Number_Default.ToString();
                 break;
             case VariableType.isString:
                 settingValue_String = settingValue_String_Default;
@@ -148,13 +152,5 @@ public class UI_SettingsValue : MonoBehaviour
                 }
                 break;
         }
-    }
-
-    //this event is called to change current selected value
-    //to new selected value whenever the current dropdown choice is updated
-    public void UpdateSelectedValue()
-    {
-        settingValue_String = dropdown.value.ToString();
-        Debug.Log(settingValue_String);
     }
 }
