@@ -10,7 +10,6 @@ public class UI_PauseMenu : MonoBehaviour
     [Header("UI")]
     public GameObject par_PM;
     [SerializeField] private GameObject par_PMContent;
-    [SerializeField] private GameObject par_SettingsContent;
     [SerializeField] private Button btn_ReturnToGame;
     [SerializeField] private Button btn_ShowSettings;
     [SerializeField] private Button btn_ReturnToPM;
@@ -25,10 +24,12 @@ public class UI_PauseMenu : MonoBehaviour
     [HideInInspector] public bool isConsoleOpen;
 
     //scripts
+    private Manager_UIReuse UIReuseScript;
     private Player_Movement PlayerMovementScript;
 
     private void Awake()
     {
+        UIReuseScript= GetComponent<Manager_UIReuse>();
         PlayerMovementScript = thePlayer.GetComponent<Player_Movement>();
 
         btn_ReturnToGame.onClick.AddListener(UnpauseGame);
@@ -77,7 +78,7 @@ public class UI_PauseMenu : MonoBehaviour
         {
             par_PM.SetActive(false);
             par_PMContent.SetActive(false);
-            par_SettingsContent.SetActive(false);
+            UIReuseScript.par_SettingsParent.SetActive(false);
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
@@ -108,18 +109,20 @@ public class UI_PauseMenu : MonoBehaviour
 
         par_PM.SetActive(true);
         par_PMContent.SetActive(true);
-        par_SettingsContent.SetActive(false);
+        UIReuseScript.par_SettingsParent.SetActive(false);
     }
 
     public void ShowSettings()
     {
         par_PMContent.SetActive(false);
-        par_SettingsContent.SetActive(true);
+        UIReuseScript.par_SettingsParent.SetActive(true);
+        UIReuseScript.SwitchToSettings();
+        UIReuseScript.SwitchChoice(1);
     }
     public void ReturnToPauseMenu()
     {
         par_PMContent.SetActive(true);
-        par_SettingsContent.SetActive(false);
+        UIReuseScript.par_SettingsParent.SetActive(false);
     }
     public void ReturnToMainMenu()
     {

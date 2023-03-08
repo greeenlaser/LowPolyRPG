@@ -13,12 +13,6 @@ public class UI_DebugMenu : MonoBehaviour
     private float timer;
     private float deltaTime;
 
-    private void Start()
-    {
-        QualitySettings.vSyncCount = 0;
-        Application.targetFrameRate = 999;
-    }
-
     private void Update()
     {
         deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;

@@ -47,10 +47,7 @@ public class UI_SettingsValue : MonoBehaviour
         {
             dropdown.ClearOptions();
             dropdown.AddOptions(settingValue_String_Choices);
-            foreach (string choice in settingValue_String_Choices)
-            {
-                dropdown.onValueChanged.AddListener(delegate { UpdateValue(choice); }) ;
-            }
+            dropdown.onValueChanged.AddListener(delegate { UpdateDropdown(); });
         }
     }
 
@@ -79,7 +76,7 @@ public class UI_SettingsValue : MonoBehaviour
     //assigned to the dropdown of this setting
     public void UpdateDropdown()
     {
-
+        UpdateValue(dropdown.value.ToString());
     }
     //updates current value of this setting to new selected value
     public void UpdateValue(string insertedValue)
@@ -87,39 +84,32 @@ public class UI_SettingsValue : MonoBehaviour
         switch (variableType)
         {
             case VariableType.isBool:
+                Debug.Log(insertedValue);
                 settingValue_Bool = insertedValue == "True";
                 toggle.isOn = settingValue_Bool;
                 break;
             case VariableType.isFloat:
+                Debug.Log(insertedValue);
                 float value = float.Parse(insertedValue);
                 if (value >= slider.minValue
                     && value <= slider.maxValue)
                 {
+                    Debug.Log(insertedValue);
                     settingValue_Number = float.Parse(insertedValue);
                     slider.value = settingValue_Number;
                     txt_SliderValue.text = settingValue_Number.ToString();
                 }
                 break;
             case VariableType.isString:
-                foreach (string choice in settingValue_String_Choices)
+                Debug.Log(insertedValue);
+                int choiceCount = settingValue_String_Choices.Count;
+                int selected = int.Parse(insertedValue);
+                if (selected >= 0
+                    && selected <= choiceCount - 1)
                 {
-                    if (insertedValue == choice)
-                    {
-                        settingValue_String = insertedValue;
-                        for (int i = 0; i < settingValue_String_Choices.Count; i++)
-                        {
-                            string selectedValue = settingValue_String_Choices[i];
-                            string userDefinedValue = settingValue_String;
-
-                            if (userDefinedValue == selectedValue)
-                            {
-                                dropdown.value = i;
-                                break;
-                            }
-                        }
-                        break;
-                    }
+                    dropdown.value = selected;
                 }
+                Debug.Log(choiceCount + ", " + selected + ", " + dropdown.value);
                 break;
         }
     }

@@ -6,6 +6,7 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using UnityEngine.Rendering.UI;
 
 public class Manager_Settings : MonoBehaviour
 {
@@ -127,11 +128,12 @@ public class Manager_Settings : MonoBehaviour
 
                         if (!Regex.IsMatch(value, @"-?\d+"))
                         {
-                            ConsoleScript.CreateNewConsoleLine("Error: Settings file value for " + type + " cannot be " + value + "! Skipping and resetting to default value.", "FAILED_FILE_LOAD");
+                            ConsoleScript.CreateNewConsoleLine("Error: Settings file value for " + type + " cannot be " + value + "! Skipping and resetting to default value.", "INVALID_VARIABLE");
                             setting.ResetValue();
                         }
                         else
                         {
+                            Debug.Log(type + ", " + value);
                             setting.UpdateValue(value);
                         }
                     }
@@ -139,7 +141,7 @@ public class Manager_Settings : MonoBehaviour
             }
             ApplySettings();
 
-            ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "SUCCEEDED_FILE_LOAD");
+            ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE_LOAD_SUCCESS");
         }
     }
 
@@ -151,6 +153,25 @@ public class Manager_Settings : MonoBehaviour
         {
             PlayerCameraScript.sensX = float.Parse(value);
             PlayerCameraScript.sensY = float.Parse(value);
+        }
+        else if (setting == "resolution")
+        {
+            string[] valueSplit = value.Split('x');
+            int res1 = int.Parse(valueSplit[0]);
+            int res2 = int.Parse(valueSplit[1]);
+
+            Screen.SetResolution(res1, res2, true);
+        }
+        else if (setting == "vsync")
+        {
+            if (value == "True")
+            {
+                Application.targetFrameRate = 60;
+            }
+            else
+            {
+                Application.targetFrameRate = 999;
+            }
         }
     }
 }
