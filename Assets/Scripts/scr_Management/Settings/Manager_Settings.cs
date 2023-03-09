@@ -6,7 +6,6 @@ using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
-using UnityEngine.Rendering.UI;
 
 public class Manager_Settings : MonoBehaviour
 {
@@ -43,6 +42,16 @@ public class Manager_Settings : MonoBehaviour
         {
             setting.ResetValue();
         }
+        //delete settings file if settings are reset
+        string[] files = Directory.GetFiles(GameManagerScript.settingsPath);
+        foreach (string file in files)
+        {
+            if (file.Contains("SettingsFile.txt"))
+            {
+                File.Delete(file);
+                break;
+            }
+        }
     }
 
     //applies all settings to changed settings if there are any changes
@@ -53,7 +62,7 @@ public class Manager_Settings : MonoBehaviour
         string[] files = Directory.GetFiles(GameManagerScript.settingsPath);
         foreach (string file in files)
         {
-            if (file == "SettingsFile.txt")
+            if (file.Contains("SettingsFile.txt"))
             {
                 File.Delete(file);
                 break;
@@ -116,29 +125,34 @@ public class Manager_Settings : MonoBehaviour
         }
         else
         {
-            foreach (UI_SettingsValue setting in settings)
+            foreach (string line in File.ReadLines(settingsFilePath))
             {
-                foreach (string line in File.ReadLines(settingsFilePath))
+                if (line.Contains(':'))
                 {
-                    if (line.Contains(':'))
-                    {
-                        string[] valueSplit = line.Split(':');
-                        string type = valueSplit[0];
-                        string value = valueSplit[1].Replace(" ", string.Empty);
+                    string[] valueSplit = line.Split(':');
+                    string type = valueSplit[0];
+                    string value = valueSplit[1].Replace(" ", string.Empty);
 
-                        if (!Regex.IsMatch(value, @"-?\d+"))
+                    foreach (UI_SettingsValue setting in settings)
+                    {
+                        if (type == setting.settingName)
                         {
-                            ConsoleScript.CreateNewConsoleLine("Error: Settings file value for " + type + " cannot be " + value + "! Skipping and resetting to default value.", "INVALID_VARIABLE");
-                            setting.ResetValue();
-                        }
-                        else
-                        {
-                            Debug.Log(type + ", " + value);
-                            setting.UpdateValue(value);
+                            if (!Regex.IsMatch(value, @"-?\d+")
+                                && setting.variableType.ToString() != "isBool")
+                            {
+                                ConsoleScript.CreateNewConsoleLine("Error: Settings file value for " + type + " cannot be " + value + "! Skipping and resetting to default value.", "INVALID_VARIABLE");
+                                setting.ResetValue();
+                            }
+                            else
+                            {
+                                setting.UpdateValue(value);
+                            }
+                            break;
                         }
                     }
                 }
             }
+
             ApplySettings();
 
             ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE_LOAD_SUCCESS");

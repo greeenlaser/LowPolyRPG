@@ -15,12 +15,12 @@ public class Manager_UIReuse : MonoBehaviour
     [SerializeField] private Button btn_Choice3;
     [SerializeField] private Transform par_UnusedSettings;
     [SerializeField] private GameObject par_Content;
-    [SerializeField] private List<GameObject> choice1_KeyCommands;
-    [SerializeField] private List<GameObject> choice2_KeyCommands;
-    [SerializeField] private List<GameObject> choice3_KeyCommands;
-    [SerializeField] private List<GameObject> choice1_Settings;
-    [SerializeField] private List<GameObject> choice2_Settings;
-    [SerializeField] private List<GameObject> choice3_Settings;
+    public List<GameObject> choice1_KeyCommands;
+    public List<GameObject> choice2_KeyCommands;
+    public List<GameObject> choice3_KeyCommands;
+    public List<GameObject> choice1_Settings;
+    public List<GameObject> choice2_Settings;
+    public List<GameObject> choice3_Settings;
 
     private void Awake()
     {

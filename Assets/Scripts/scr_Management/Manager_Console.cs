@@ -29,6 +29,7 @@ public class Manager_Console : MonoBehaviour
     private GameManager GameManagerScript;
     private UI_PauseMenu PauseMenuScript;
     private UI_DebugMenu DebugMenuScript;
+    private Manager_UIReuse UIReuseScript;
 
     //private variables
     private bool debugMenuEnabled = true;
@@ -41,23 +42,12 @@ public class Manager_Console : MonoBehaviour
     private readonly List<GameObject> createdTexts = new();
     private readonly List<string> insertedCommands = new();
 
-    public enum MessageType
-    {
-        CONSOLE_INFO_MESSAGE,
-        CONSOLE_SUCCESS_MESSAGE,
-        CONSOLE_ERROR_MESSAGE,
-        CONSOLE_COMMAND,
-        UNITY_LOG_MESSAGE,
-        UNITY_LOG_ERROR,
-        INVALID_VARIABLE_VALUE,
-        UNAUTHORIZED_PLAYER_ACTION
-    }
-
     private void Awake()
     {
         GameManagerScript = GetComponent<GameManager>();
         PauseMenuScript = GetComponent<UI_PauseMenu>();
         DebugMenuScript = GetComponent<UI_DebugMenu>();
+        UIReuseScript = GetComponent<Manager_UIReuse>();
     }
 
     private void Update()
@@ -153,19 +143,19 @@ public class Manager_Console : MonoBehaviour
 
         insertedCommands.Add(input);
         currentSelectedInsertedCommand = insertedCommands.Count - 1;
-        CreateNewConsoleLine("--" + input + "--", MessageType.CONSOLE_COMMAND.ToString());
+        CreateNewConsoleLine("--" + input + "--", "CONSOLE COMMAND");
 
         //if inserted text was not empty and player pressed enter
         if (separatedWords.Count >= 1)
         {
             if (Regex.IsMatch(separatedWords[0], @"-?\d+"))
             {
-                CreateNewConsoleLine("Error: Console command cannot start with a number!", MessageType.CONSOLE_ERROR_MESSAGE.ToString());
+                CreateNewConsoleLine("Error: Console command cannot start with a number!", "CONSOLE ERROR MESSAGE");
             }
             else
             {
                 //clear console log
-                if (separatedWords[0] == "clear"
+                if (separatedWords[0] == "clr"
                          && separatedWords.Count == 1)
                 {
                     Command_ClearConsole();
@@ -177,18 +167,86 @@ public class Manager_Console : MonoBehaviour
                     Command_ToggleDebugMenu();
                 }
                 //quit game
-                else if (separatedWords[0] == "quit"
+                else if (separatedWords[0] == "qqq"
                          && separatedWords.Count == 1)
                 {
                     Command_ForceQuit();
                 }
-                     
+
+                //lists game bindings
+                if (separatedWords[0].Contains("gs")
+                    && separatedWords.Count == 2)
+                {
+                    //get general settings
+                    if (separatedWords[1] == "gen")
+                    {
+                        Command_GetSettings("gen");
+                    }
+                    //get environment settings
+                    else if (separatedWords[1] == "env")
+                    {
+                        Command_GetSettings("env");
+                    }
+                    //get audio settings
+                    else if (separatedWords[1] == "aud")
+                    {
+                        Command_GetSettings("aud");
+                    }
+                    else
+                    {
+                        insertedCommands.Add(input);
+                        currentSelectedInsertedCommand = insertedCommands.Count - 1;
+
+                        CreateNewConsoleLine("Error: Unknown or invalid command!", "CONSOLE ERROR MESSAGE");
+                    }
+                }
+                //sets selected setting to new value
+                else if (separatedWords[0].Contains("ss")
+                         && separatedWords.Count == 3)
+                {
+                    //Command_SetSetting();
+                }
+
+                //lists key bindings
+                if (separatedWords[0].Contains("gkb")
+                    && separatedWords.Count == 2)
+                {
+                    //get general key binds
+                    if (separatedWords[1] == "gen")
+                    {
+                        //Command_GetGeneralKeyBinds();
+                    }
+                    //get movement key binds 
+                    else if (separatedWords[1] == "mov")
+                    {
+                        //Command_GetMovementKeyBinds();
+                    }
+                    //get combat key binds
+                    else if (separatedWords[1] == "com")
+                    {
+                        //Command_GetCombatKeyBinds();
+                    }
+                    else
+                    {
+                        insertedCommands.Add(input);
+                        currentSelectedInsertedCommand = insertedCommands.Count - 1;
+
+                        CreateNewConsoleLine("Error: Unknown or invalid command!", "CONSOLE ERROR MESSAGE");
+                    }
+                }
+                //sets selected key binding to new value
+                else if (separatedWords[0].Contains("skb")
+                         && separatedWords.Count == 3)
+                {
+                    //Command_SetKeyBind();
+                }
+
                 else
                 {
                     insertedCommands.Add(input);
                     currentSelectedInsertedCommand = insertedCommands.Count - 1;
 
-                    CreateNewConsoleLine("Error: Unknown or invalid command!", MessageType.CONSOLE_ERROR_MESSAGE.ToString());
+                    CreateNewConsoleLine("Error: Unknown or invalid command!", "CONSOLE ERROR MESSAGE");
                 }
             }
         }
@@ -197,7 +255,7 @@ public class Manager_Console : MonoBehaviour
             insertedCommands.Add(input);
             currentSelectedInsertedCommand = insertedCommands.Count - 1;
 
-            CreateNewConsoleLine("Error: No command was inserted!", MessageType.CONSOLE_ERROR_MESSAGE.ToString());
+            CreateNewConsoleLine("Error: No command was inserted!", "CONSOLE ERROR MESSAGE");
         }
 
         separatedWords.Clear();
@@ -225,29 +283,78 @@ public class Manager_Console : MonoBehaviour
         {
             DebugMenuScript.par_DebugMenu.transform.position -= new Vector3(0, 114, 0);
 
-            CreateNewConsoleLine("Enabled debug menu.", MessageType.CONSOLE_INFO_MESSAGE.ToString());
+            CreateNewConsoleLine("Enabled debug menu.", "CONSOLE INFO MESSAGE");
             debugMenuEnabled = true;
         }
         else
         {
             DebugMenuScript.par_DebugMenu.transform.position += new Vector3(0, 114, 0);
 
-            CreateNewConsoleLine("Disabled debug menu.", MessageType.CONSOLE_INFO_MESSAGE.ToString());
+            CreateNewConsoleLine("Disabled debug menu.", "CONSOLE INFO MESSAGE");
             debugMenuEnabled = false;
         }
     }
     //force-quit game
     public void Command_ForceQuit()
     {
-        CreateNewConsoleLine("Force-quit game through console.", MessageType.CONSOLE_INFO_MESSAGE.ToString());
+        CreateNewConsoleLine("Force-quit game through console.", "CONSOLE INFO MESSAGE");
 
-#if UNITY_EDITOR
+        #if UNITY_EDITOR
         EditorApplication.isPlaying = false;
-#endif
+        #endif
 
-#if UNITY_STANDALONE
+        #if UNITY_STANDALONE
         Application.Quit();
-#endif
+        #endif
+    }
+
+    //get game settings based on selected type
+    public void Command_GetSettings(string choice)
+    {
+        List<GameObject> selectedChoice = new();
+        if (choice == "gen")
+        {
+            foreach (GameObject setting in UIReuseScript.choice1_Settings) 
+            {
+                selectedChoice.Add(setting);
+            }
+        }
+        else if (choice == "env")
+        {
+            foreach (GameObject setting in UIReuseScript.choice2_Settings)
+            {
+                selectedChoice.Add(setting);
+            }
+        }
+        else if (choice == "aud")
+        {
+            foreach (GameObject setting in UIReuseScript.choice3_Settings)
+            {
+                selectedChoice.Add(setting);
+            }
+        }
+
+        foreach (GameObject setting in selectedChoice)
+        {
+            UI_SettingsValue SettingScript = setting.GetComponent<UI_SettingsValue>();
+
+            string theOutput = SettingScript.settingName + ": ";
+            string settingType = SettingScript.variableType.ToString();
+            if (settingType == "isBool")
+            {
+                theOutput += SettingScript.settingValue_Bool.ToString();
+            }
+            else if (settingType == "isFloat")
+            {
+                theOutput += SettingScript.settingValue_Number.ToString();
+            }
+            else if (settingType == "isString")
+            {
+                theOutput += SettingScript.settingValue_String;
+            }
+
+            CreateNewConsoleLine(theOutput, "CONSOLE INFO MESSAGE");
+        }
     }
 
     //reads all unity debug log messages and creates a new debug file message for each one
@@ -291,19 +398,11 @@ public class Manager_Console : MonoBehaviour
             || output.Contains("CS")
             || output.Contains("Error"))
         {
-            resultMessage = MessageType.UNITY_LOG_ERROR.ToString() + "] [" + unusedStackString + "] [" + type + "]";
-        }
-        else if (output.Contains("Incorrect value"))
-        {
-            resultMessage = MessageType.INVALID_VARIABLE_VALUE.ToString();
-        }
-        else if (output.Contains("Requirements not met"))
-        {
-            resultMessage = MessageType.UNAUTHORIZED_PLAYER_ACTION.ToString();
+            resultMessage = "UNITY LOG ERROR" + "] [" + unusedStackString + "] [" + type + "]";
         }
         else
         {
-            resultMessage = MessageType.UNITY_LOG_MESSAGE.ToString();
+            resultMessage = "UNITY LOG MESSAGE";
         }
 
         CreateNewConsoleLine(output, resultMessage);
