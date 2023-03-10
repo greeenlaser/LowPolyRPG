@@ -41,7 +41,7 @@ public class Manager_Settings : MonoBehaviour
 
         volume.profile.TryGet(out color);
 
-        btn_ApplySettings.onClick.AddListener(ApplySettings);
+        btn_ApplySettings.onClick.AddListener(SaveSettings);
         btn_ResetSettings.onClick.AddListener(ResetSettings);
     }
 
@@ -77,9 +77,8 @@ public class Manager_Settings : MonoBehaviour
         }
     }
 
-    //applies all settings to changed settings if there are any changes
-    //and saves all settings to external txt file
-    public void ApplySettings()
+    //saves all game settings to an external txt file
+    public void SaveSettings()
     {
         //delete old settings file if settings are applied
         string[] files = Directory.GetFiles(GameManagerScript.settingsPath);
@@ -92,7 +91,6 @@ public class Manager_Settings : MonoBehaviour
             }
         }
 
-        //using a text editor to write new text to new debug file in the debug file path
         using StreamWriter settingsFile = File.CreateText(settingsFilePath);
 
         settingsFile.WriteLine("Settings file for Low_poly_RPG.");
@@ -104,42 +102,20 @@ public class Manager_Settings : MonoBehaviour
 
             if (settingType == "isBool")
             {
-                if (setting.settingValue_Bool 
-                    != setting.settingValue_Bool_Default)
-                {
-                    Debug.Log(setting.settingName + ", " + setting.toggle.isOn.ToString() + ", " + setting.settingValue_Bool.ToString());
-
-                    setting.UpdateValue(setting.toggle.isOn.ToString());
-                    UpdateValue(setting.settingName, setting.settingValue_Bool.ToString());
-
-                    Debug.Log(setting.settingName + ", " + setting.toggle.isOn.ToString() + ", " + setting.settingValue_Bool.ToString());
-                }
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_Bool.ToString());
             }
             else if (settingType == "isFloat")
             {
-                if (setting.settingValue_Number
-                    != setting.settingValue_Number_Default)
-                {
-                    setting.UpdateValue(setting.slider.value.ToString());
-                    UpdateValue(setting.settingName, setting.settingValue_Number.ToString());
-                }
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_Number.ToString());
             }
             else if (settingType == "isString")
             {
-                if (setting.settingValue_String
-                    != setting.settingValue_String_Default)
-                {
-                    setting.UpdateValue(setting.settingValue_String);
-                    UpdateValue(setting.settingName, setting.settingValue_String);
-                }
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_String);
             }
         }
     }
 
-    //loads all settings from the settings file
+    //loads all settings from the external settings file
     public void LoadSettings()
     {
         settingsFilePath = GameManagerScript.settingsPath + @"\SettingsFile.txt";
@@ -176,14 +152,20 @@ public class Manager_Settings : MonoBehaviour
                                 if (settingType == "isBool")
                                 {
                                     setting.settingValue_Bool = value == "True";
+                                    setting.UpdateValue(setting.toggle.isOn.ToString());
+                                    UpdateValue(setting.settingName, setting.settingValue_Bool.ToString());
                                 }
                                 else if (settingType == "isFloat")
                                 {
                                     setting.settingValue_Number = float.Parse(value);
+                                    setting.UpdateValue(setting.slider.value.ToString());
+                                    UpdateValue(setting.settingName, setting.settingValue_Number.ToString());
                                 }
                                 else if (settingType == "isString")
                                 {
                                     setting.settingValue_String = value;
+                                    setting.UpdateValue(setting.settingValue_String);
+                                    UpdateValue(setting.settingName, setting.settingValue_String);
                                 }
                             }
                             break;
@@ -192,14 +174,15 @@ public class Manager_Settings : MonoBehaviour
                 }
             }
 
-            ApplySettings();
+            SaveSettings();
 
             ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE LOAD SUCCESS");
         }
     }
 
-    //this method changes the actual in-game setting value to the desired choice
-    //once all checks have passed that this setting is allowed and settings are applied
+    //this method actually applies all settings
+    //and needs to be hard-coded in
+    //to ensure each setting is applied at the correct place
     public void UpdateValue(string setting, string value)
     {
         //general

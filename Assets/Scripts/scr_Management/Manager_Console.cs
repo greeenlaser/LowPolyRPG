@@ -398,12 +398,11 @@ public class Manager_Console : MonoBehaviour
                     }
                     else
                     {
-                        foundsetting.settingValue_Bool = settingsValue == "True";
-
-                        Debug.Log(foundsetting.settingName + ", " + foundsetting.settingValue_Bool + ", " + settingsValue);
+                        foundsetting.UpdateValue(settingsValue);
+                        SettingsScript.UpdateValue(settingsName, settingsValue);
 
                         CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
-                        SettingsScript.ApplySettings();
+                        //SettingsScript.ApplySettings();
                     }
                 }
                 else if (settingType == "isFloat")
@@ -416,9 +415,11 @@ public class Manager_Console : MonoBehaviour
                     }
                     else
                     {
-                        foundsetting.settingValue_Number = val;
+                        foundsetting.UpdateValue(settingsValue);
+                        SettingsScript.UpdateValue(settingsName, settingsValue);
+
                         CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
-                        SettingsScript.ApplySettings();
+                        //SettingsScript.ApplySettings();
                     }
                 }
                 else if (settingType == "isString")
@@ -439,9 +440,11 @@ public class Manager_Console : MonoBehaviour
                     }
                     else
                     {
-                        foundsetting.settingValue_String = settingsValue;
+                        foundsetting.UpdateValue(settingsValue);
+                        SettingsScript.UpdateValue(settingsName, settingsValue);
+
                         CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
-                        SettingsScript.ApplySettings();
+                        //SettingsScript.ApplySettings();
                     }
                 }
 

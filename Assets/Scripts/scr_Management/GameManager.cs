@@ -123,7 +123,6 @@ public class GameManager : MonoBehaviour
         string replaceEmpty = replaceColon.Replace(' ', '_');
         debugFilePath = gamePath + @"\DebugFile_" + replaceEmpty + ".txt";
 
-        //using a text editor to write new text to new debug file in the debug file path
         using StreamWriter debugFile = File.CreateText(debugFilePath);
 
         debugFile.WriteLine("Debug information file for Low_poly_RPG.");
