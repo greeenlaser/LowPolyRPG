@@ -174,8 +174,8 @@ public class Manager_Console : MonoBehaviour
                 }
 
                 //lists game bindings
-                if (separatedWords[0].Contains("gs")
-                    && separatedWords.Count == 2)
+                else if (separatedWords[0].Contains("gs")
+                         && separatedWords.Count == 2)
                 {
                     //get general settings
                     if (separatedWords[1] == "gen")
@@ -208,8 +208,8 @@ public class Manager_Console : MonoBehaviour
                 }
 
                 //lists key bindings
-                if (separatedWords[0].Contains("gkb")
-                    && separatedWords.Count == 2)
+                else if (separatedWords[0].Contains("gkb")
+                         && separatedWords.Count == 2)
                 {
                     //get general key binds
                     if (separatedWords[1] == "gen")
@@ -338,20 +338,7 @@ public class Manager_Console : MonoBehaviour
         {
             UI_SettingsValue SettingScript = setting.GetComponent<UI_SettingsValue>();
 
-            string theOutput = SettingScript.settingName + ": ";
-            string settingType = SettingScript.variableType.ToString();
-            if (settingType == "isBool")
-            {
-                theOutput += SettingScript.settingValue_Bool.ToString();
-            }
-            else if (settingType == "isFloat")
-            {
-                theOutput += SettingScript.settingValue_Number.ToString();
-            }
-            else if (settingType == "isString")
-            {
-                theOutput += SettingScript.settingValue_String;
-            }
+            string theOutput = SettingScript.settingName + ": " + SettingScript.GetCurrentValue();
 
             CreateNewConsoleLine(theOutput, "CONSOLE INFO MESSAGE");
         }
