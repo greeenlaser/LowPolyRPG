@@ -30,6 +30,7 @@ public class Manager_Console : MonoBehaviour
     private UI_PauseMenu PauseMenuScript;
     private UI_DebugMenu DebugMenuScript;
     private Manager_UIReuse UIReuseScript;
+    private Manager_Settings SettingsScript;
 
     //private variables
     private bool debugMenuEnabled = true;
@@ -48,6 +49,7 @@ public class Manager_Console : MonoBehaviour
         PauseMenuScript = GetComponent<UI_PauseMenu>();
         DebugMenuScript = GetComponent<UI_DebugMenu>();
         UIReuseScript = GetComponent<Manager_UIReuse>();
+        SettingsScript= GetComponent<Manager_Settings>();
     }
 
     private void Update()
@@ -173,8 +175,13 @@ public class Manager_Console : MonoBehaviour
                     Command_ForceQuit();
                 }
 
+                //resets all settings to default values
+                else if (separatedWords[0] == "rs")
+                {
+                    Command_ResetSettings();
+                }
                 //lists game bindings
-                else if (separatedWords[0].Contains("gs")
+                else if (separatedWords[0] == "gs"
                          && separatedWords.Count == 2)
                 {
                     //get general settings
@@ -201,14 +208,19 @@ public class Manager_Console : MonoBehaviour
                     }
                 }
                 //sets selected setting to new value
-                else if (separatedWords[0].Contains("ss")
+                else if (separatedWords[0] == "ss"
                          && separatedWords.Count == 3)
                 {
-                    //Command_SetSetting();
+                    Command_SetSetting();
                 }
 
+                //resets all keybinds to default values
+                else if (separatedWords[0] == "rkb")
+                {
+                    //Command_ResetKeyBinds();
+                }
                 //lists key bindings
-                else if (separatedWords[0].Contains("gkb")
+                else if (separatedWords[0] == "gkb"
                          && separatedWords.Count == 2)
                 {
                     //get general key binds
@@ -235,7 +247,7 @@ public class Manager_Console : MonoBehaviour
                     }
                 }
                 //sets selected key binding to new value
-                else if (separatedWords[0].Contains("skb")
+                else if (separatedWords[0] == "skb"
                          && separatedWords.Count == 3)
                 {
                     //Command_SetKeyBind();
@@ -308,6 +320,12 @@ public class Manager_Console : MonoBehaviour
         #endif
     }
 
+    //resets all settings to default values
+    public void Command_ResetSettings()
+    {
+        SettingsScript.ResetSettings();
+        CreateNewConsoleLine("Success: Reset all settings to default values.", "CONSOLE SUCCESS MESSAGE");
+    }
     //get game settings based on selected type
     public void Command_GetSettings(string choice)
     {
@@ -341,6 +359,93 @@ public class Manager_Console : MonoBehaviour
             string theOutput = SettingScript.settingName + ": " + SettingScript.GetCurrentValue();
 
             CreateNewConsoleLine(theOutput, "CONSOLE INFO MESSAGE");
+        }
+    }
+    //sets selected setting to new value
+    public void Command_SetSetting()
+    {
+        string settingsName = separatedWords[1];
+        string settingsValue = separatedWords[2];
+
+        if (!Regex.IsMatch(settingsName, @"^[a-zA-Z]+$"))
+        {
+            CreateNewConsoleLine("Error: " + settingsName + " is not a valid setting name!", "CONSOLE ERROR MESSAGE");
+        }
+        else
+        {
+            UI_SettingsValue foundsetting = null;
+            foreach (UI_SettingsValue setting in SettingsScript.settings)
+            {
+                if (setting.settingName == settingsName)
+                {
+                    foundsetting = setting;
+                    break;
+                }
+            }
+            if (foundsetting == null)
+            {
+                CreateNewConsoleLine("Error: " + settingsName + " was not found!", "CONSOLE ERROR MESSAGE");
+            }
+            else
+            {
+                string settingType = foundsetting.variableType.ToString();
+                if (settingType == "isBool")
+                {
+                    if (settingsValue != "True"
+                        && settingsValue != "False")
+                    {
+                        CreateNewConsoleLine("Error: " + settingsValue + " can only be True or False!", "CONSOLE ERROR MESSAGE");
+                    }
+                    else
+                    {
+                        foundsetting.settingValue_Bool = settingsValue == "True";
+
+                        Debug.Log(foundsetting.settingName + ", " + foundsetting.settingValue_Bool + ", " + settingsValue);
+
+                        CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
+                        SettingsScript.ApplySettings();
+                    }
+                }
+                else if (settingType == "isFloat")
+                {
+                    float val = float.Parse(settingsValue);
+                    if (val < foundsetting.slider.minValue
+                        || val > foundsetting.slider.maxValue)
+                    {
+                        CreateNewConsoleLine("Error: " + settingsValue + " is out of range!", "CONSOLE ERROR MESSAGE");
+                    }
+                    else
+                    {
+                        foundsetting.settingValue_Number = val;
+                        CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
+                        SettingsScript.ApplySettings();
+                    }
+                }
+                else if (settingType == "isString")
+                {
+                    string foundChoice = "";
+                    foreach (string choice in foundsetting.settingValue_String_Choices)
+                    {
+                        if (settingsValue == choice)
+                        {
+                            foundChoice = choice; 
+                            break;
+                        }
+                    }
+                    if (foundChoice == "")
+                    {
+                        CreateNewConsoleLine("Error: " + settingsValue + " is invalid!", "CONSOLE ERROR MESSAGE");
+
+                    }
+                    else
+                    {
+                        foundsetting.settingValue_String = settingsValue;
+                        CreateNewConsoleLine("Success: Set " + settingsName + " value to " + settingsValue + "!", "CONSOLE SUCCESS MESSAGE");
+                        SettingsScript.ApplySettings();
+                    }
+                }
+
+            }
         }
     }
 

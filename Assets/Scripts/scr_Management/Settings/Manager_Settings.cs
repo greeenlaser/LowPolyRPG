@@ -2,23 +2,31 @@ using System;
 using System.IO;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Text.RegularExpressions;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.HighDefinition;
 
 public class Manager_Settings : MonoBehaviour
 {
     [Header("Assignables")]
     public List<UI_SettingsValue> settings = new();
-    [SerializeField] private GameObject thePlayer;
+    public List<AudioSource> sfx = new();
+    public AudioSource currentSong;
 
     [Header("UI")]
     [SerializeField] private Button btn_ApplySettings;
     [SerializeField] private Button btn_ResetSettings;
 
+    [Header("Scripts")]
+    [SerializeField] private Volume volume;
+    [SerializeField] private GameObject thePlayer;
+    [SerializeField] private Camera playerCamera;
+
     //private variables
     private string settingsFilePath;
+    private ColorAdjustments color;
 
     //scripts
     private GameManager GameManagerScript;
@@ -31,6 +39,8 @@ public class Manager_Settings : MonoBehaviour
         ConsoleScript = GetComponent<Manager_Console>();
         PlayerCameraScript = thePlayer.GetComponentInChildren<Camera>().GetComponent<Player_Camera>();
 
+        volume.profile.TryGet(out color);
+
         btn_ApplySettings.onClick.AddListener(ApplySettings);
         btn_ResetSettings.onClick.AddListener(ResetSettings);
     }
@@ -41,6 +51,19 @@ public class Manager_Settings : MonoBehaviour
         foreach (UI_SettingsValue setting in settings)
         {
             setting.ResetValue();
+            string settingType = setting.variableType.ToString();
+            if (settingType == "isBool")
+            {
+                UpdateValue(setting.settingName, setting.settingValue_Bool_Default.ToString());
+            }
+            else if (settingType == "isFloat")
+            {
+                UpdateValue(setting.settingName, setting.settingValue_Number_Default.ToString());
+            }
+            else if (settingType == "isString")
+            {
+                UpdateValue(setting.settingName, setting.settingValue_String_Default);
+            }
         }
         //delete settings file if settings are reset
         string[] files = Directory.GetFiles(GameManagerScript.settingsPath);
@@ -84,8 +107,12 @@ public class Manager_Settings : MonoBehaviour
                 if (setting.settingValue_Bool 
                     != setting.settingValue_Bool_Default)
                 {
+                    Debug.Log(setting.settingName + ", " + setting.toggle.isOn.ToString() + ", " + setting.settingValue_Bool.ToString());
+
                     setting.UpdateValue(setting.toggle.isOn.ToString());
                     UpdateValue(setting.settingName, setting.settingValue_Bool.ToString());
+
+                    Debug.Log(setting.settingName + ", " + setting.toggle.isOn.ToString() + ", " + setting.settingValue_Bool.ToString());
                 }
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_Bool.ToString());
             }
@@ -121,7 +148,7 @@ public class Manager_Settings : MonoBehaviour
         {
             ResetSettings();
 
-            ConsoleScript.CreateNewConsoleLine("Loaded default settings.", "FILE_NOT_FOUND");
+            ConsoleScript.CreateNewConsoleLine("Loaded default settings.", "FILE NOT FOUND");
         }
         else
         {
@@ -145,7 +172,19 @@ public class Manager_Settings : MonoBehaviour
                             }
                             else
                             {
-                                setting.UpdateValue(value);
+                                string settingType = setting.variableType.ToString();
+                                if (settingType == "isBool")
+                                {
+                                    setting.settingValue_Bool = value == "True";
+                                }
+                                else if (settingType == "isFloat")
+                                {
+                                    setting.settingValue_Number = float.Parse(value);
+                                }
+                                else if (settingType == "isString")
+                                {
+                                    setting.settingValue_String = value;
+                                }
                             }
                             break;
                         }
@@ -155,27 +194,26 @@ public class Manager_Settings : MonoBehaviour
 
             ApplySettings();
 
-            ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE_LOAD_SUCCESS");
+            ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE LOAD SUCCESS");
         }
     }
 
     //this method changes the actual in-game setting value to the desired choice
     //once all checks have passed that this setting is allowed and settings are applied
-    private void UpdateValue(string setting, string value)
+    public void UpdateValue(string setting, string value)
     {
-        if (setting == "mousespeed")
+        //general
+        if (setting == "fov")
+        {
+            playerCamera.fieldOfView = float.Parse(value);
+        }
+        else if (setting == "mousespeed")
         {
             PlayerCameraScript.sensX = float.Parse(value);
             PlayerCameraScript.sensY = float.Parse(value);
         }
-        else if (setting == "resolution")
-        {
-            string[] valueSplit = value.Split('x');
-            int res1 = int.Parse(valueSplit[0]);
-            int res2 = int.Parse(valueSplit[1]);
 
-            Screen.SetResolution(res1, res2, true);
-        }
+        //graphics
         else if (setting == "vsync")
         {
             if (value == "True")
@@ -185,6 +223,46 @@ public class Manager_Settings : MonoBehaviour
             else
             {
                 Application.targetFrameRate = 999;
+            }
+        }
+        else if (setting == "resolution")
+        {
+            string[] valueSplit = value.Split('x');
+            int res1 = int.Parse(valueSplit[0]);
+            int res2 = int.Parse(valueSplit[1]);
+
+            Screen.SetResolution(res1, res2, true);
+        }
+        else if (setting == "brightness")
+        {
+            float finalVal = float.Parse(value) / 10;
+            color.postExposure.value = finalVal;
+        } 
+        else if (setting == "contrast")
+        {
+            color.contrast.value = float.Parse(value);
+        }
+        else if (setting == "colorblindmode")
+        {
+
+        }
+
+        //audio
+        else if (setting == "mastervolume")
+        {
+            
+        }
+        else if (setting == "musicvolume")
+        {
+            float finalVal = float.Parse(value) / 100;
+            currentSong.volume = finalVal;
+        }
+        else if (setting == "sfxvolume")
+        {
+            foreach (AudioSource sfx in sfx)
+            {
+                float finalVal = float.Parse(value) / 100;
+                sfx.volume = finalVal;
             }
         }
     }
