@@ -54,7 +54,8 @@ public class Manager_Console : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.PageUp))
+        if (Input.GetKeyDown(KeyCode.PageUp)
+            && !PauseMenuScript.isChangingKey)
         {
             PauseMenuScript.isConsoleOpen = !PauseMenuScript.isConsoleOpen;
         }
@@ -332,21 +333,21 @@ public class Manager_Console : MonoBehaviour
         List<GameObject> selectedChoice = new();
         if (choice == "gen")
         {
-            foreach (GameObject setting in UIReuseScript.choice1_Settings) 
+            foreach (GameObject setting in UIReuseScript.Settings_General) 
             {
                 selectedChoice.Add(setting);
             }
         }
         else if (choice == "env")
         {
-            foreach (GameObject setting in UIReuseScript.choice2_Settings)
+            foreach (GameObject setting in UIReuseScript.Settings_Environment)
             {
                 selectedChoice.Add(setting);
             }
         }
         else if (choice == "aud")
         {
-            foreach (GameObject setting in UIReuseScript.choice3_Settings)
+            foreach (GameObject setting in UIReuseScript.Settings_Audio)
             {
                 selectedChoice.Add(setting);
             }

@@ -15,10 +15,6 @@ public class Manager_Settings : MonoBehaviour
     public List<AudioSource> sfx = new();
     public AudioSource currentSong;
 
-    [Header("UI")]
-    [SerializeField] private Button btn_ApplySettings;
-    [SerializeField] private Button btn_ResetSettings;
-
     [Header("Scripts")]
     [SerializeField] private Volume volume;
     [SerializeField] private GameObject thePlayer;
@@ -40,9 +36,6 @@ public class Manager_Settings : MonoBehaviour
         PlayerCameraScript = thePlayer.GetComponentInChildren<Camera>().GetComponent<Player_Camera>();
 
         volume.profile.TryGet(out color);
-
-        btn_ApplySettings.onClick.AddListener(SaveSettings);
-        btn_ResetSettings.onClick.AddListener(ResetSettings);
     }
 
     //resets all setting values to their default values
@@ -103,6 +96,7 @@ public class Manager_Settings : MonoBehaviour
             if (settingType == "isBool")
             {
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_Bool.ToString());
+                
             }
             else if (settingType == "isFloat")
             {
@@ -113,6 +107,8 @@ public class Manager_Settings : MonoBehaviour
                 settingsFile.WriteLine(setting.settingName + ": " + setting.settingValue_String);
             }
         }
+
+        ConsoleScript.CreateNewConsoleLine("Successfully saved all settings to file.", "FILE SAVE SUCCESS");
     }
 
     //loads all settings from the external settings file
@@ -174,9 +170,7 @@ public class Manager_Settings : MonoBehaviour
                 }
             }
 
-            SaveSettings();
-
-            ConsoleScript.CreateNewConsoleLine("Success: Loaded settings file.", "FILE LOAD SUCCESS");
+            ConsoleScript.CreateNewConsoleLine("Successfully loaded settings file.", "FILE LOAD SUCCESS");
         }
     }
 
@@ -224,10 +218,6 @@ public class Manager_Settings : MonoBehaviour
         else if (setting == "contrast")
         {
             color.contrast.value = float.Parse(value);
-        }
-        else if (setting == "colorblindmode")
-        {
-
         }
 
         //audio

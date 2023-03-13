@@ -22,6 +22,7 @@ public class UI_PauseMenu : MonoBehaviour
     //public but hidden variables
     [HideInInspector] public bool isPaused;
     [HideInInspector] public bool isConsoleOpen;
+    [HideInInspector] public bool isChangingKey;
 
     //scripts
     private Manager_UIReuse UIReuseScript;

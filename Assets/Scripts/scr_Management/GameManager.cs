@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     //scripts
     private UI_PauseMenu PauseMenuScript;
     private Manager_Console ConsoleScript;
+    private Manager_KeyBindings KeyBindsScript;
     private Manager_Settings SettingsScript;
     private Player_Movement PlayerMovementScript;
 
@@ -70,6 +71,9 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        KeyBindsScript = GetComponent<Manager_KeyBindings>();
+        KeyBindsScript.LoadKeyBinds();
+
         SettingsScript = GetComponent<Manager_Settings>();
         SettingsScript.LoadSettings();
 
